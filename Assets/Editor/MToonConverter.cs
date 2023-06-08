@@ -16,7 +16,7 @@ public class MToonConverter : EditorWindow
     private string _fromShaderName = "VRM/MToon";
     private Shader _toShader;
     private string _toShaderName = "VRM10/Universal Render Pipeline/MToon10";
-    
+
     private List<Material> _targetMaterials = new(); //ModelName.Materials下にあるマテリアル群
     private List<Material> _convertMaterials = new(); //
 
@@ -25,7 +25,7 @@ public class MToonConverter : EditorWindow
     private string _targetVrmFileName;
 
 
-    [MenuItem("Window/MToon Converter")]
+    [MenuItem("Window/mmm/MToon Converter")]
     static void Open()
     {
         var window = GetWindow<MToonConverter>();
@@ -53,7 +53,7 @@ public class MToonConverter : EditorWindow
 
         _fromShader = Shader.Find(_fromShaderName);
         _toShader = Shader.Find(_toShaderName);
-        
+
         if (_fromShader == null)
         {
             Debug.Log($"Can't find {_fromShaderName}!");
@@ -72,7 +72,7 @@ public class MToonConverter : EditorWindow
         _targetVrmFileName = Path.GetFileNameWithoutExtension(_targetVrmFullPath);
         string[] filePaths = Directory.GetFiles($"{_targetVrmDirectoryName}/{_targetVrmFileName}.Materials", "*.asset",
             SearchOption.AllDirectories);
-        
+
         CreateUrpMaterial(filePaths);
 
         //set material to vrm.
@@ -83,13 +83,13 @@ public class MToonConverter : EditorWindow
         PrefabUtility.SaveAsPrefabAsset(objSrc, prefabPath); //create prefabVariant.
         DestroyImmediate(objSrc); //PrefabVariant作成のために作成したPrefabをSceneから削除
     }
-    
+
 
     private void CreateUrpMaterial(string[] filePaths)
     {
         _targetMaterials.Clear();
         _convertMaterials.Clear();
-        
+
         foreach (var filePath in filePaths)
         {
             var material = AssetDatabase.LoadAssetAtPath<Material>(filePath);
@@ -103,7 +103,7 @@ public class MToonConverter : EditorWindow
 
         foreach (var targetMaterial in _targetMaterials)
         {
-            
+
             if (targetMaterial.shader != _fromShader)
             {
                 Debug.Log($"MToon is not used! : {targetMaterial.name}");
@@ -177,7 +177,7 @@ public class MToonConverter : EditorWindow
             int outlineWidthMode = (int)GetFloatSafe(targetMaterial, "_OutlineWidthMode"); //そのまま
 
             var alphaMode = GetFloatSafe(targetMaterial, "_BlendMode");
-            
+
             var cutoff = GetFloatSafe(targetMaterial, "_Cutoff");
             var mainColor = GetColorSafe(targetMaterial, "_Color");
             var shadeColor = GetColorSafe(targetMaterial, "_ShadeColor");
@@ -258,7 +258,7 @@ public class MToonConverter : EditorWindow
             //alphatomask
             //debugmode
             SetFloatSafe(convertMaterial, "_M_EditMode", 1.0f);
-            
+
             _convertMaterials.Add(convertMaterial);
 
             //create material file.
@@ -275,17 +275,17 @@ public class MToonConverter : EditorWindow
         {
             GameObject childObj = child.gameObject;
             ReplaceMaterial(childObj); //再帰的に子供にも同じ処理
-            
+
             if (!childObj.TryGetComponent<SkinnedMeshRenderer>(out var mesh)) continue;
 
             List<Material> changeMaterialList = new();
-            
+
             for (int i = 0; i < mesh.sharedMaterials.Length; i++) //materialLoop
             {
                 foreach (var targetMaterial in _targetMaterials) //nameSearchLoop
                 {
                     if (mesh.sharedMaterials[i].name != targetMaterial.name) continue;
-                    
+
                     var index = _targetMaterials.IndexOf(targetMaterial);
                     changeMaterialList.Add(_convertMaterials[index]);
                     break;
