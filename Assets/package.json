@@ -1,0 +1,17 @@
+{
+  "name": "com.mmm.ntools",
+  "displayName": "ntools",
+  "description": "It's miscellaneous toolset.",
+  "version": "0.0.1",
+  "author": "mao mamiya",
+  "unity": "2022.3",
+  "keywords": [
+    "unity"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mamiyacats/unity_nTools"
+  }
+}
