@@ -1,7 +1,6 @@
 # About
 
 This is a toolset for Unity. <br>
-Here are some of the tools included in this toolset. <br>
 <br>
 
 # Tools
